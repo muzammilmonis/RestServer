@@ -16,13 +16,14 @@ if (!file(".git").exists()) {
     val errorText = """
         
         =====================[ ERROR ]=====================
-         The RestServer project directory is not a properly cloned Git repository.
+         The Leaf project directory is not a properly cloned Git repository.
          
-         In order to build RestServer from source you must clone
-         the RestServer source repository using Git, not download a code
+         In order to build Leaf from source you must clone
+         the Leaf repository using Git, not download a code
          zip from GitHub.
          
-         Build RestServer with the included Gradle tasks
+         Built Leaf jars are available for download at
+         https://www.leafmc.one/download
          
          See https://github.com/PaperMC/Paper/blob/main/CONTRIBUTING.md
          for further information on building and modifying Paper forks.
@@ -32,7 +33,7 @@ if (!file(".git").exists()) {
     error(errorText)
 }
 
-rootProject.name = "restserver"
+rootProject.name = "leaf"
 
 for (name in listOf("leaf-api", "leaf-server")) {
     val projName = name.lowercase(Locale.ENGLISH)
