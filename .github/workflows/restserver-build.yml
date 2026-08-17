@@ -1,0 +1,75 @@
+name: Build RestServer 1.21.11
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "restserver-ci@users.noreply.github.com"
+          git config --global user.name "RestServer CI"
+
+      - name: Apply source patches
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon -Dorg.gradle.workers.max=2 -Dorg.gradle.jvmargs='-Xmx4G -XX:+UseG1GC' applyAllPatches --stacktrace
+
+      - name: Build runnable RestServer jar
+        run: |
+          ./gradlew --no-daemon -Dorg.gradle.workers.max=2 -Dorg.gradle.jvmargs='-Xmx4G -XX:+UseG1GC' createMojmapPaperclipJar --stacktrace
+
+      - name: Prepare artifact
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+          libs = Path('leaf-server/build/libs')
+          jars = [p for p in libs.glob('*.jar') if p.is_file()]
+          if not jars:
+              raise SystemExit('No jars found in leaf-server/build/libs')
+          for p in sorted(jars):
+              print(f'{p}: {p.stat().st_size} bytes')
+          def score(p):
+              n = p.name.lower()
+              return (int('mojmap' in n and 'paperclip' in n), int('paperclip' in n), p.stat().st_size)
+          chosen = max(jars, key=score)
+          print('Selected:', chosen)
+          shutil.copy2(chosen, 'RestServer.jar')
+          PY
+          sha256sum RestServer.jar | tee RestServer.jar.sha256
+          echo '--- manifest ---'
+          unzip -p RestServer.jar META-INF/MANIFEST.MF | sed -n '1,160p' || true
+
+      - name: Upload RestServer.jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: RestServer-1.21.11
+          path: |
+            RestServer.jar
+            RestServer.jar.sha256
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,20 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: RestServer <restserver@local>
+Date: Mon, 17 Aug 2026 00:00:00 +0500
+Subject: [PATCH] RestServer bootstrap and authoritative engine selection
+
+The server.properties version key is read before Minecraft bootstrap. This
+1.21.11 build refuses to load registries/worlds if another engine is requested.
+
+diff --git a/net/minecraft/server/Main.java b/net/minecraft/server/Main.java
+--- a/net/minecraft/server/Main.java
++++ b/net/minecraft/server/Main.java
+@@ -100,6 +100,8 @@ public class Main {
+                 writePidFile(path);
+             }
+ 
++            fun.restserver.core.RestServerBootstrap.earlyInit(optionSet); // RestServer - early engine/version gate
++
+             org.dreeam.leaf.config.LeafConfig.loadConfig(); // Leaf - Leaf config
+ 
+             CrashReport.preload();

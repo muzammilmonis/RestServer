@@ -518,7 +518,7 @@ index 6ee39b534b8d992655bc0cef3c299d12cbae0034..f59879ae7d3c73cd4c4233d30667988b
      protected LineReader buildReader(LineReaderBuilder builder) {
          builder
 -                .appName("Paper")
-+                .appName("Leaf") // Gale - branding changes // Leaf - Rebrand
++                .appName("RestServer") // Gale - branding changes // Leaf - Rebrand
                  .variable(LineReader.HISTORY_FILE, java.nio.file.Paths.get(".console_history"))
                  .completer(new ConsoleCommandCompleter(this.server))
                  .option(LineReader.Option.COMPLETE_IN_WORD, true);
@@ -534,7 +534,7 @@ index 74ffdc823e66fc5ec027c4b7c462382bcbfe2be2..ca846f76d5ff53c547e1ce943e4e68cf
 +    // Leaf start - Rebrand
 +    private static final String BRAND_PUFFERFISH_NAME = "Pufferfish";
 +    private static final String BRAND_PURPUR_NAME = "Purpur";
-+    private static final String BRAND_LEAF_NAME = "Leaf";
++    private static final String BRAND_RESTSERVER_NAME = "RestServer";
 +    // Leaf end - Rebrand
  
      private static final String BUILD_DEV = "DEV";
@@ -544,10 +544,10 @@ index 74ffdc823e66fc5ec027c4b7c462382bcbfe2be2..ca846f76d5ff53c547e1ce943e4e68cf
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
                  .map(Key::key)
 -                .orElse(BRAND_PAPER_ID),
-+                .orElse(BRAND_LEAF_ID), // Gale - branding changes // Leaf - Rebrand
++                .orElse(Key.key("restserver", "restserver")), // RestServer - branding
              getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
 -                .orElse(BRAND_PAPER_NAME),
-+                .orElse(BRAND_LEAF_NAME), // Gale - branding changes // Leaf - Rebrand
++                .orElse(BRAND_RESTSERVER_NAME), // RestServer - branding
              SharedConstants.getCurrentVersion().id(),
              SharedConstants.getCurrentVersion().name(),
              getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
@@ -561,7 +561,7 @@ index 74ffdc823e66fc5ec027c4b7c462382bcbfe2be2..ca846f76d5ff53c547e1ce943e4e68cf
 +            || brandId.equals(BRAND_PAPER_ID)
 +            || brandId.equals(BRAND_GALE_ID) // Gale - branding changes
 +            || brandId.equals(BRAND_PUFFERFISH_ID)
-+            || brandId.equals(BRAND_PURPUR_ID);
++            || brandId.equals(BRAND_PURPUR_ID) || brandId.equals(BRAND_LEAF_ID); // RestServer - preserve Leaf compatibility
 +            // Leaf end - Rebrand
      }
  
@@ -575,7 +575,7 @@ index 7ffb7a210bf840009158d5e4364dad78221ded6c..c3713b6653bcd595c0a40788cd4ffa12
              } else {
                  // this.debugTail = this.debugTail.setNext(new CraftAsyncDebugger(this.currentTick + CraftScheduler.RECENT_TICKS, task.getOwner(), task.getTaskClass())); // Paper
 -                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Paper"); // Paper
-+                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Leaf"); // Paper // Gale - branding changes // Leaf - Rebrand
++                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to RestServer"); // Paper // Gale - branding changes // Leaf - Rebrand
                  // We don't need to parse pending
                  // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
              }
@@ -588,7 +588,7 @@ index 9323383f7d1226d887fc9219354ac9613204cbc2..900a50ed18e931cd090d970634fa2772
      @Override
      public com.destroystokyo.paper.util.VersionFetcher getVersionFetcher() {
 -        return new com.destroystokyo.paper.PaperVersionFetcher();
-+        return new org.dreeam.leaf.version.LeafVersionFetcher(); // Leaf - Rebrand
++        return new fun.restserver.version.RestServerVersionFetcher(); // Leaf - Rebrand
      }
  
      @Override
@@ -615,17 +615,17 @@ index 5c1306ac6eb620a38ed5ef3632b611214e1d5dcd..fbd9aac889f320eefcb8f9c815c19e49
 +                    We do not want people to report thread issues to Paper,
 +                    but we do want people to report thread issues to Gale.
 +                    */
-+                    logger.log(Level.SEVERE, "The server has stopped responding! This is (probably) not a Paper bug. This could be a Leaf bug."); // Paper // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "The server has stopped responding! This is (probably) not a Paper bug. This could be a RestServer bug."); // Paper // Leaf - Rebrand
 +                    // Gale end - branding changes
                      logger.log(Level.SEVERE, "If you see a plugin in the Server thread dump below, then please report it to that author");
                      logger.log(Level.SEVERE, "\t *Especially* if it looks like HTTP or MySQL operations are occurring");
                      logger.log(Level.SEVERE, "If you see a world save or edit, then it means you did far more than your server can handle at once");
                      logger.log(Level.SEVERE, "\t If this is the case, consider increasing timeout-time in spigot.yml but note that this will replace the crash with LARGE lag spikes");
 -                    logger.log(Level.SEVERE, "If you are unsure or still think this is a Paper bug, please report this to https://github.com/PaperMC/Paper/issues");
-+                    logger.log(Level.SEVERE, "If you are unsure or think this is a Leaf bug, please report this to https://github.com/Winds-Studio/Leaf/issues - and if you think this is a Paper bug, please report this to https://github.com/PaperMC/Paper/issues"); // Gale - branding changes // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "Check plugins first; if the issue reproduces without plugins, report it as a RestServer core issue"); // Gale - branding changes // Leaf - Rebrand
                      logger.log(Level.SEVERE, "Be sure to include ALL relevant console errors and Minecraft crash reports");
 -                    logger.log(Level.SEVERE, "Paper version: " + Bukkit.getServer().getVersion());
-+                    logger.log(Level.SEVERE, "Leaf version: " + Bukkit.getServer().getVersion()); // Gale - branding changes // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "RestServer version: " + Bukkit.getServer().getVersion()); // Gale - branding changes // Leaf - Rebrand
  
                      if (net.minecraft.world.level.Level.lastPhysicsProblem != null) {
                          logger.log(Level.SEVERE, "------------------------------");
@@ -639,14 +639,14 @@ index 5c1306ac6eb620a38ed5ef3632b611214e1d5dcd..fbd9aac889f320eefcb8f9c815c19e49
 +                    We do not want people to report thread issues to Paper,
 +                    but we do want people to report thread issues to Gale.
 +                    */
-+                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues - THIS IS NOT A PAPER BUG OR CRASH - " + Bukkit.getServer().getVersion() + " ---"); // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If this reproduces without plugins, report it as a RestServer core issue - THIS IS NOT A PAPER BUG OR CRASH - " + Bukkit.getServer().getVersion() + " ---"); // Leaf - Rebrand
 +                    // Gale end - branding changes
                      logger.log(Level.SEVERE, "The server has not responded for " + (currentTime - lastTick) / 1000 + " seconds! Creating thread dump");
                  }
                  // Paper end - Different message for short timeout
                  logger.log(Level.SEVERE, "------------------------------");
 -                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Paper!):"); // Paper
-+                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Leaf!):"); // Paper // Gale - branding changes // Leaf - Rebrand
++                logger.log(Level.SEVERE, "Server thread dump (Look for plugins here before reporting to RestServer!):"); // Paper // Gale - branding changes // Leaf - Rebrand
                  FeatureHooks.dumpAllChunkLoadInfo(MinecraftServer.getServer(), isLongTimeout); // Paper - log detailed tick information
                  WatchdogThread.dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().serverThread.threadId(), Integer.MAX_VALUE), logger);
                  logger.log(Level.SEVERE, "------------------------------");
@@ -660,7 +660,7 @@ index 5c1306ac6eb620a38ed5ef3632b611214e1d5dcd..fbd9aac889f320eefcb8f9c815c19e49
 +                    We do not want people to report thread issues to Paper,
 +                    but we do want people to report thread issues to Gale.
 +                    */
-+                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues - THIS IS NOT A PAPER BUG OR CRASH ---"); // Leaf - Rebrand
++                    logger.log(Level.SEVERE, "--- DO NOT REPORT THIS TO PAPER - If this reproduces without plugins, report it as a RestServer core issue - THIS IS NOT A PAPER BUG OR CRASH ---"); // Leaf - Rebrand
 +                    // Gale end - branding changes
                  }
  
