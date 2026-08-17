@@ -12,7 +12,7 @@ index ad10eda79e6b76fc1896b4cdb27546b515d1cfa4..62503e6e65844f8a8a4806c9e99fe34c
      private boolean trackingStackTrace = true;
      private StackTraceElement[] uncategorizedStackTrace = new StackTraceElement[0];
      private final SystemReport systemReport = new SystemReport();
-+    private List<String> extraInfo = List.of("", "RESTSERVER CORE CRASH REPORT", ""); // Leaf - Rebrand
++    private List<String> extraInfo = List.of("", "DO NOT REPORT THIS TO PAPER! REPORT TO LEAF INSTEAD!", ""); // Leaf - Rebrand
  
      public CrashReport(String title, Throwable exception) {
          this.title = title;
@@ -56,7 +56,7 @@ index 67318e32fa58a89ba9321a36627af07697aacea4..629c8a97e12f10313bb4540cd9379e4f
      public DamageSource eventEntityDamager(final Entity entity) {
          if (this.directEntity != null) {
 -            throw new IllegalStateException("Cannot set an event damager when a direct entity is already set (report a bug to Paper)");
-+            throw new IllegalStateException("Cannot set an event damager when a direct entity is already set (if this reproduces without plugins, report it as a RestServer core issue)"); // Leaf - Rebrand
++            throw new IllegalStateException("Cannot set an event damager when a direct entity is already set (if you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues)"); // Leaf - Rebrand
          }
          final DamageSource damageSource = this.copy();
          damageSource.eventEntityDamager = entity;
@@ -69,7 +69,7 @@ index 1e9e061ec694ad64fc2724b83a66dfec7e069a43..1b04ddfe48ac014660d132d64880e150
      // Paper start
      private static void printOversizedLog(String msg, Path file, int x, int z) {
 -        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER - You may ask for help on Discord, but do not file an issue. These error messages can not be removed.");
-+        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER - You may ask for help on Discord, but do not file an issue. These error messages can not be removed. - If this reproduces without plugins, report it as a RestServer core issue)"); // Leaf - Rebrand
++        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER OR LEAF - You may ask for help on Discord, but do not file an issue. These error messages can not be removed. - If you think this is a Leaf bug, please report it at https://github.com/Winds-Studio/Leaf/issues)"); // Leaf - Rebrand
      }
  
      private static CompoundTag readOversizedChunk(RegionFile regionfile, ChunkPos chunkCoordinate) throws IOException {
